@@ -12,7 +12,8 @@ namespace CityTouristSpots.Interfaces
 
         // Authentication
         Task<AuthResponseDto?> AuthenticateAsync(string email, string password);
-        Task<IEnumerable<User>> SearchUsersAsync(string keyword);
 
+        // ✅ FIXED: return UserDto instead of User
+        Task<IEnumerable<UserDto>> SearchUsersAsync(string keyword);
     }
 }

@@ -161,6 +161,52 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "CityTouristSpots.Controllers.CitiesController",
+    "Method": "GetCitiesCount",
+    "RelativePath": "api/Cities/count",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Int32",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "CityTouristSpots.Controllers.CitiesController",
+    "Method": "SearchCities",
+    "RelativePath": "api/Cities/search",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "keyword",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[CityTouristSpots.DTOs.CityDto, CityTouristSpots, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
     "ContainingType": "CityTouristSpots.Controllers.TouristSpotsController",
     "Method": "GetTouristSpots",
     "RelativePath": "api/TouristSpots",

@@ -26,6 +26,25 @@ namespace CityTouristSpots.Services
             });
         }
 
+        public async Task<int> GetCitiesCountAsync()
+        {
+            var cities = await _cityRepository.GetAllAsync();
+            return cities.Count();
+        }
+
+        public async Task<IEnumerable<CityDto>> SearchCitiesAsync(string keyword)
+        {
+            var cities = await _cityRepository.SearchAsync(keyword);
+            return cities.Select(city => new CityDto
+            {
+                CityId = city.CityId,
+                CityName = city.CityName ?? string.Empty,
+                Country = city.Country,
+                Description = city.Description,
+                CreatedBy = city.CreatedBy
+            });
+        }
+
         public async Task<CityDto> GetCityByIdAsync(int id)
         {
             var city = await _cityRepository.GetByIdAsync(id);

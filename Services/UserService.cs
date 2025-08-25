@@ -25,69 +25,17 @@ namespace CityTouristSpots.Services
         public async Task<IEnumerable<UserDto>> GetAllUsersAsync()
         {
             var users = await _userRepository.GetAllAsync();
-            return users.Select(user => new UserDto
-            {
-                UserId = user.UserId,
-                UserName = user.UserName,
-                Email = user.Email,
-                UserTypeName = user.UserType?.TypeName,
-                CitiesCreated = user.CitiesCreated?.Select(c => new CityDto
-                {
-                    CityId = c.CityId,
-                    CityName = c.CityName ?? string.Empty,
-                    Country = c.Country,
-                    Description = c.Description,
-                    CreatedBy = c.CreatedBy
-                }).ToList() ?? new List<CityDto>(),
-                TouristSpotsCreated = user.TouristSpotsCreated?.Select(ts => new TouristSpotDto
-                {
-                    TouristSpotId = ts.TouristSpotId,
-                    SpotName = ts.SpotName ?? string.Empty,
-                    Location = ts.Location,
-                    Description = ts.Description,
-                    EntryFee = ts.EntryFee,
-                    CityId = ts.CityId,
-                    CreatedBy = ts.CreatedBy
-                }).ToList() ?? new List<TouristSpotDto>()
-            });
+            return users.Select(MapToDto);
         }
 
         public async Task<UserDto?> GetUserByIdAsync(int id)
         {
             var user = await _userRepository.GetByIdAsync(id);
-            if (user == null)
-                return null;
-
-            return new UserDto
-            {
-                UserId = user.UserId,
-                UserName = user.UserName,
-                Email = user.Email,
-                UserTypeName = user.UserType?.TypeName,
-                CitiesCreated = user.CitiesCreated?.Select(c => new CityDto
-                {
-                    CityId = c.CityId,
-                    CityName = c.CityName ?? string.Empty,
-                    Country = c.Country,
-                    Description = c.Description,
-                    CreatedBy = c.CreatedBy
-                }).ToList() ?? new List<CityDto>(),
-                TouristSpotsCreated = user.TouristSpotsCreated?.Select(ts => new TouristSpotDto
-                {
-                    TouristSpotId = ts.TouristSpotId,
-                    SpotName = ts.SpotName ?? string.Empty,
-                    Location = ts.Location,
-                    Description = ts.Description,
-                    EntryFee = ts.EntryFee,
-                    CityId = ts.CityId,
-                    CreatedBy = ts.CreatedBy
-                }).ToList() ?? new List<TouristSpotDto>()
-            };
+            return user == null ? null : MapToDto(user);
         }
 
         public async Task<UserDto> CreateUserAsync(UserDto dto)
         {
-            // Check if user already exists
             var existingUser = await _userRepository.GetByEmailAsync(dto.Email ?? string.Empty);
             if (existingUser != null)
                 throw new InvalidOperationException("User with this email already exists");
@@ -105,14 +53,7 @@ namespace CityTouristSpots.Services
             }
 
             var createdUser = await _userRepository.CreateAsync(user);
-
-            return new UserDto
-            {
-                UserId = createdUser.UserId,
-                UserName = createdUser.UserName,
-                Email = createdUser.Email,
-                UserTypeName = createdUser.UserType?.TypeName ?? "User"
-            };
+            return MapToDto(createdUser);
         }
 
         public async Task UpdateUserAsync(int id, UserDto dto)
@@ -185,11 +126,17 @@ namespace CityTouristSpots.Services
             return tokenHandler.WriteToken(token);
         }
 
+        // ✅ Final Search implementation
         public async Task<IEnumerable<UserDto>> SearchUsersAsync(string keyword)
         {
             var users = await _userRepository.SearchAsync(keyword);
+            return users.Select(MapToDto);
+        }
 
-            return users.Select(user => new UserDto
+        // ✅ Helper mapper
+        private static UserDto MapToDto(User user)
+        {
+            return new UserDto
             {
                 UserId = user.UserId,
                 UserName = user.UserName,
@@ -213,12 +160,7 @@ namespace CityTouristSpots.Services
                     CityId = ts.CityId,
                     CreatedBy = ts.CreatedBy
                 }).ToList() ?? new List<TouristSpotDto>()
-            });
-        }
-
-        Task<IEnumerable<User>> IUserService.SearchUsersAsync(string keyword)
-        {
-            throw new NotImplementedException();
+            };
         }
     }
 }

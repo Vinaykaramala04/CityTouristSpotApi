@@ -25,6 +25,25 @@ namespace CityTouristSpots.Controllers
             return Ok(cities);
         }
 
+        [HttpGet("count")]
+        [Authorize(Roles = "Admin,RegularUser")]
+        public async Task<ActionResult<int>> GetCitiesCount()
+        {
+            var count = await _cityService.GetCitiesCountAsync();
+            return Ok(new { TotalCities = count });
+        }
+
+        [HttpGet("search")]
+        [Authorize(Roles = "Admin,RegularUser")]
+        public async Task<ActionResult<IEnumerable<CityDto>>> SearchCities([FromQuery] string keyword)
+        {
+            if (string.IsNullOrWhiteSpace(keyword))
+                return BadRequest("Search keyword cannot be empty.");
+
+            var cities = await _cityService.SearchCitiesAsync(keyword);
+            return Ok(cities);
+        }
+
         [HttpGet("{id}")]
         [Authorize(Roles = "Admin,RegularUser")]
         public async Task<ActionResult<CityDto>> GetCity(int id)

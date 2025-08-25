@@ -52,5 +52,31 @@ namespace CityTouristSpots.Repositories
                 await _context.SaveChangesAsync();
             }
         }
+
+        // ✅ Implement SearchAsync here
+        public async Task<IEnumerable<City>> SearchAsync(string keyword)
+        {
+            if (string.IsNullOrWhiteSpace(keyword))
+                return await GetAllAsync();
+
+            return await _context.Cities
+                .Include(c => c.CreatedByUser)
+                .Include(c => c.TouristSpots)
+                .Where(c => c.CityName.Contains(keyword) ||
+                            c.Country.Contains(keyword) ||
+                            c.Description.Contains(keyword))
+                .ToListAsync();
+        }
+
+        // ✅ Efficient count
+        public async Task<int> GetCountAsync()
+        {
+            return await _context.Cities.CountAsync();
+        }
+
+        public Task<int> CountAsync()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
